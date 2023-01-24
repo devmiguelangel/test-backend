@@ -64,9 +64,33 @@ def test_product_list_view(client):
 
 
 # TODO rendalo: test crear producto
+@pytest.mark.django_db
+def test_create_product_api_view(client):
+    category = generic_category.make(name="category1")
 
+    response = client.post(
+        "/main/products/",
+        {
+            "name": "product1",
+            "price": 200,
+            "stock": 20,
+            "category": category.id
+        },
+        format='json'
+    )
 
+    assert response.status_code == 201
 
-
+    assert response.json() == {
+        "id": 1,
+        "name": "product1",
+        "price": 200,
+        "stock": 20,
+        "category": {
+            "id": category.id,
+            "name": category.name,
+        }
+    }
 
 # TODO postulante: test en algo que use todo
+

@@ -14,7 +14,7 @@ class CategoryAPIView(APIView):
         categories = get_categories()
         serializer = CategorySerializer(categories, many=True)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def post(self, request):
         # Validating the data that is being sent to the API
@@ -54,6 +54,6 @@ class ProductAPIView(APIView):
         if product:
             product_serializer = ProductSerializer(product)
 
-            return Response(product_serializer.data)
+            return Response(product_serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(None, status=status.HTTP_400_BAD_REQUEST)
