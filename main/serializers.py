@@ -25,3 +25,9 @@ class CreateProductSerializer(ProductSerializer):
     """ Product create serializer """
 
     category = serializers.IntegerField()
+
+
+class EditProductSerializer(CreateProductSerializer):
+    """ Product edit serializer """
+
+    pass

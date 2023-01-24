@@ -38,7 +38,6 @@ def test_get_average_product_price():
 # TODO rendalo: un test un poco más complejo de python a secas
 
 
-
 @pytest.mark.django_db
 def test_product_list_view(client):
     prod1 = generic_product.make(
@@ -94,3 +93,81 @@ def test_create_product_api_view(client):
 
 # TODO postulante: test en algo que use todo
 
+
+@pytest.mark.django_db
+def test_get_product_api_view(client):
+    product = generic_product.make(
+        name="product1",
+        price=100,
+        stock=200,
+        category=generic_category.make(name="category1"),
+    )
+
+    response = client.get('/main/products/{0}/'.format(product.pk))
+
+    assert response.status_code == 200
+
+    assert response.json() == {
+        "id": product.id,
+        "name": "product1",
+        "price": 100,
+        "stock": 200,
+        "category": {
+            "id": product.category.id,
+            "name": "category1",
+        }
+    }
+
+
+@pytest.mark.django_db
+def test_edit_product_api_view(client):
+    product = generic_product.make(
+        name="product1",
+        price=100,
+        stock=200,
+        category=generic_category.make(name="category1"),
+    )
+
+    response = client.put(
+        '/main/products/{0}/'.format(product.pk),
+        {
+            "name": "product1",
+            "price": 100,
+            "stock": 150,
+            "category": product.category.pk
+        },
+        content_type='application/json'
+    )
+
+    assert response.status_code == 200
+
+    assert response.json() == {
+        "id": product.id,
+        "name": "product1",
+        "price": 100,
+        "stock": 150,
+        "category": {
+            "id": product.category.id,
+            "name": "category1",
+        }
+    }
+
+
+@pytest.mark.django_db
+def test_delete_product_api_view(client):
+    product = generic_product.make(
+        name="product1",
+        price=100,
+        stock=200,
+        category=generic_category.make(name="category1"),
+    )
+
+    response = client.delete(
+        '/main/products/{0}/'.format(product.pk),
+    )
+
+    assert response.status_code == 202
+
+    assert response.json() == {
+        "product_id": product.id,
+    }
